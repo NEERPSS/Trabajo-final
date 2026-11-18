@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIMTELE-WEB · Sala de control</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       PANTALLA DE ACCESO (LOGIN / REGISTRO / RECUPERACIÓN)
+       ========================================================= -->
+  <div id="pantallaAuth" class="auth-contenedor">
+    <div class="auth-cable"></div>
+
+    <div class="auth-layout">
+      <!-- Lado izquierdo: Marca temática teleférico -->
+      <div class="auth-info">
+        <div class="cabina-logo" aria-hidden="true">
+          <div class="cable-gancho"></div>
+          <div class="cabina-cuerpo">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <h1>SIMTELE-WEB</h1>
+        <p class="auth-subtitulo">Centro de Control y Monitoreo de Transporte por Cable.</p>
+        <p class="auth-nota">Acceso exclusivo para operadores autorizados de cabina y línea.</p>
+      </div>
+
+      <!-- Lado derecho: Tarjeta de formularios -->
+      <div class="auth-tarjeta">
+
+        <!-- VISTA 1: INICIAR SESIÓN -->
+        <form id="formLogin" class="auth-form">
+          <h2>Iniciar sesión</h2>
+          <p class="ayuda">Usuario demo: <strong>operador</strong> · Clave: <strong>1234</strong></p>
+
+          <label for="loginUser">Usuario o correo de operador</label>
+          <input id="loginUser" type="text" placeholder="Ej.: operador" required>
+
+          <label for="loginPass">Contraseña</label>
+          <div class="pass-grupo">
+            <input id="loginPass" type="password" placeholder="••••••••" required>
+            <button type="button" class="btn-ojo" data-target="loginPass" aria-label="Mostrar contraseña">👁️</button>
+          </div>
+
+          <p id="msgLogin" class="resultado"></p>
+
+          <button type="submit" class="btn-principal">Entrar a la cabina</button>
+
+          <div class="auth-enlaces">
+            <button type="button" id="irRecuperar" class="link-btn">¿Olvidaste tu contraseña?</button>
+          </div>
+
+          <hr class="separador">
+
+          <button type="button" id="irRegistro" class="btn-secundario">Crear cuenta de operador</button>
+        </form>
+
+        <!-- VISTA 2: REGISTRO (CON CORREO INCLUIDO) -->
+        <form id="formRegistro" class="auth-form" hidden>
+          <h2>Registrar operador</h2>
+          <p class="ayuda">Crea una credencial para ingresar al sistema.</p>
+
+          <label for="regNombre">Nombre completo</label>
+          <input id="regNombre" type="text" placeholder="Ej.: Carlos Mamani" required>
+
+          <label for="regEmail">Correo electrónico</label>
+          <input id="regEmail" type="email" placeholder="Ej.: carlos@teleferico.bo" required>
+
+          <label for="regUser">Usuario</label>
+          <input id="regUser" type="text" placeholder="Ej.: cmamani" required>
+
+          <label for="regLinea">Línea asignada</label>
+          <select id="regLinea">
+            <option value="Línea Roja">Línea Roja</option>
+            <option value="Línea Amarilla">Línea Amarilla</option>
+            <option value="Línea Verde">Línea Verde</option>
+            <option value="Línea Azul">Línea Azul</option>
+            <option value="Línea Morada">Línea Morada</option>
+          </select>
+
+          <label for="regPass">Nueva contraseña</label>
+          <div class="pass-grupo">
+            <input id="regPass" type="password" placeholder="Mínimo 4 caracteres" required>
+            <button type="button" class="btn-ojo" data-target="regPass" aria-label="Mostrar contraseña">👁️</button>
+          </div>
+
+          <p id="msgRegistro" class="resultado"></p>
+
+          <button type="submit" class="btn-principal">Registrarse</button>
+          <button type="button" class="link-btn volver-login">← Volver al inicio de sesión</button>
+        </form>
+
+        <!-- VISTA 3: RECUPERAR CONTRASEÑA (ESTILO FACEBOOK) -->
+        <div id="vistaRecuperar" class="auth-form" hidden>
+          <h2>Recupera tu cuenta</h2>
+
+          <!-- Paso A: Buscar cuenta -->
+          <form id="formBuscarCuenta">
+            <p class="ayuda">Ingresa tu usuario o correo electrónico para buscar tu credencial.</p>
+            <label for="recUser">Usuario o Correo</label>
+            <input id="recUser" type="text" placeholder="Ej.: operador o correo@..." required>
+            <p id="msgRecBuscar" class="resultado"></p>
+            <div class="fila-botones">
+              <button type="button" class="btn-cancelar volver-login">Cancelar</button>
+              <button type="submit" class="btn-principal">Buscar</button>
+            </div>
+          </form>
+
+          <!-- Paso B: Cuenta encontrada y cambio de contraseña -->
+          <form id="formResetPass" hidden>
+            <div class="perfil-encontrado">
+              <div class="avatar-cabina">🚠</div>
+              <div>
+                <strong id="recNombreEncontrado">Operador</strong>
+                <small id="recDetalleEncontrado">Línea asignada</small>
+              </div>
+            </div>
+
+            <label for="recNuevaPass">Escribe tu nueva contraseña</label>
+            <div class="pass-grupo">
+              <input id="recNuevaPass" type="password" placeholder="Nueva contraseña" required>
+              <button type="button" class="btn-ojo" data-target="recNuevaPass" aria-label="Mostrar contraseña">👁️</button>
+            </div>
+
+            <p id="msgRecReset" class="resultado"></p>
+
+            <div class="fila-botones">
+              <button type="button" class="btn-cancelar volver-login">Cancelar</button>
+              <button type="submit" class="btn-principal">Guardar contraseña</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       PANEL PRINCIPAL DE SALA DE CONTROL (OCULTO HASTA LOGIN)
+       ========================================================= -->
+  <div id="appPrincipal" hidden>
+    <header>
+      <div class="header-top">
+        <div>
+          <h1>SIMTELE-WEB <small>Sala de control educativa</small></h1>
+          <p class="aviso">Simulación didáctica: los umbrales NO son límites operativos reales de Mi Teleférico.</p>
+        </div>
+
+        <!-- Controles derechos: Menú tipo caja + Sesión -->
+        <div class="header-controles">
+          <span id="usuarioActivo" class="badge-usuario"></span>
+
+          <!-- MENÚ TIPO CAJA (CUADRÍCULA / APP LAUNCHER) -->
+          <div class="caja-menu-wrapper">
+            <button id="btnMenuCaja" type="button" class="btn-caja" aria-expanded="false" aria-controls="panelCaja" title="Abrir menú de módulos">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="3" y="3" width="4.5" height="4.5" rx="1"/>
+                <rect x="9.75" y="3" width="4.5" height="4.5" rx="1"/>
+                <rect x="16.5" y="3" width="4.5" height="4.5" rx="1"/>
+                <rect x="3" y="9.75" width="4.5" height="4.5" rx="1"/>
+                <rect x="9.75" y="9.75" width="4.5" height="4.5" rx="1"/>
+                <rect x="16.5" y="9.75" width="4.5" height="4.5" rx="1"/>
+                <rect x="3" y="16.5" width="4.5" height="4.5" rx="1"/>
+                <rect x="9.75" y="16.5" width="4.5" height="4.5" rx="1"/>
+                <rect x="16.5" y="16.5" width="4.5" height="4.5" rx="1"/>
+              </svg>
+              <span>Módulos</span>
+            </button>
+
+            <!-- Caja desplegable con los módulos -->
+            <nav id="panelCaja" class="panel-caja" aria-label="Módulos" hidden>
+              <div class="panel-caja-titulo">Módulos de control</div>
+              <div class="panel-caja-grid">
+                <a href="#emergencia" class="caja-item item-danger">
+                  <span class="caja-icono">🛑</span>
+                  <span>1. Emergencia</span>
+                </a>
+                <a href="#mantenimiento" class="caja-item item-warn">
+                  <span class="caja-icono">🔧</span>
+                  <span>2. Mantenimiento</span>
+                </a>
+                <a href="#viento" class="caja-item item-info">
+                  <span class="caja-icono">🌬️</span>
+                  <span>3. Viento</span>
+                </a>
+                <a href="#sensores" class="caja-item item-ok">
+                  <span class="caja-icono">📡</span>
+                  <span>4. Sensores</span>
+                </a>
+              </div>
+            </nav>
+          </div>
+
+          <button id="btnCerrarSesion" type="button" class="btn-salir">Salir</button>
+        </div>
+      </div>
+
+      <div class="estado-general">
+        <span id="reloj"></span>
+        <button id="btnParada" type="button" class="peligro">Parada general (simulada)</button>
+      </div>
+    </header>
+
+    <div id="banner" class="banner" hidden>PARADA GENERAL ACTIVA (simulación). Pulsa de nuevo para reanudar.</div>
+
+    <main>
+      <!-- MÓDULO 1 -->
+      <section id="emergencia">
+        <h2>1. Detención de emergencia</h2>
+        <form id="formEmergencia">
+          <label for="vel">Velocidad (km/h)</label>
+          <input id="vel" type="text" placeholder="Ej.: 72">
+          <label for="tr">Tiempo de reacción (s)</label>
+          <input id="tr" type="text" placeholder="Ej.: 3">
+          <p class="ayuda">Distancia = (v/3.6) × t. Umbral ficticio: más de 40 m = alerta.</p>
+          <button type="submit">Calcular</button>
+        </form>
+        <p id="resEmergencia" class="resultado"></p>
+      </section>
+
+      <!-- MÓDULO 2 -->
+      <section id="mantenimiento">
+        <h2>2. Mantenimiento</h2>
+        <form id="formMant">
+          <label for="comp">Componente</label>
+          <input id="comp" type="text" placeholder="Ej.: Motor cabina 12">
+          <label for="horas">Horas de uso</label>
+          <input id="horas" type="text" placeholder="Ej.: 350">
+          <label for="estadoMant">Estado</label>
+          <select id="estadoMant">
+            <option value="normal">Normal</option>
+            <option value="revisión">Revisión</option>
+            <option value="urgente">Urgente</option>
+          </select>
+          <p class="ayuda">Escribe el componente y sus horas de uso (número). Usa Eliminar para quitar un registro.</p>
+          <button type="submit">Agregar registro</button>
+        </form>
+        <p id="msgMant" class="resultado"></p>
+        <div class="tabla">
+          <table>
+            <thead><tr><th>Componente</th><th>Horas</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody id="tbodyMant"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MÓDULO 3 -->
+      <section id="viento">
+        <h2>3. Viento y oscilación</h2>
+        <form id="formViento">
+          <div class="cinco">
+            <div><label for="v1">Medición 1</label><input id="v1" type="text"></div>
+            <div><label for="v2">Medición 2</label><input id="v2" type="text"></div>
+            <div><label for="v3">Medición 3</label><input id="v3" type="text"></div>
+            <div><label for="v4">Medición 4</label><input id="v4" type="text"></div>
+            <div><label for="v5">Medición 5</label><input id="v5" type="text"></div>
+          </div>
+          <p class="ayuda">Valores simulados en km/h. Leve: promedio menor a 25. Moderado: menor a 45. Fuerte: 45 o más.</p>
+          <button type="submit">Analizar</button>
+        </form>
+        <p id="resViento" class="resultado"></p>
+      </section>
+
+      <!-- MÓDULO 4 -->
+      <section id="sensores">
+        <h2>4. Sensores</h2>
+        <form id="formSensor">
+          <label for="cod">Código del sensor</label>
+          <input id="cod" type="text" placeholder="SEN-001">
+          <label for="tipo">Tipo</label>
+          <select id="tipo">
+            <option>Temperatura</option>
+            <option>Vibración</option>
+            <option>Tensión de cable</option>
+            <option>Viento</option>
+          </select>
+          <label for="lect">Lectura</label>
+          <input id="lect" type="text" placeholder="Ej.: 45.5">
+          <p class="ayuda">El código debe tener el formato SEN-001 (SEN- y 3 dígitos). La lectura debe ser un número.</p>
+          <button type="submit">Registrar sensor</button>
+        </form>
+        <p id="msgSensor" class="resultado"></p>
+        <div class="tabla">
+          <table>
+            <thead><tr><th>Código</th><th>Tipo</th><th>Lectura</th></tr></thead>
+            <tbody id="tbodySensor"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer><p>Programación Web I · Desafío SIMTELE-WEB · Proyecto educativo, sin datos reales.</p></footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
